@@ -24,7 +24,10 @@ from redmine.issue import Issue
 
 def _fetch_patches(id, chunk):
     issue = Issue(id)
-    issue.get_attachments(chunk)
+    try:
+        issue.get_attachments(chunk)
+    except Exception as err:
+        print 'Stopped suddently: %s' % str(err)
 
 
 def _main():

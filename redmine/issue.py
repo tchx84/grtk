@@ -51,7 +51,7 @@ class Issue(object):
     def _dump_attachment(self, name, content):
         issue_path = self._get_issue_path()
         if not os.path.exists(issue_path):
-            raise EnvironmentError
+            raise EnvironmentError('Path %s does not exists' % issue_path)
 
         path = os.path.join(issue_path, name)
         with file(path, 'w') as attachment:
@@ -65,8 +65,7 @@ class Issue(object):
         try:
             response = urllib2.urlopen(req)
         except urllib2.HTTPError as err:
-            print 'Could not retrieve %s: %s' % (url, str(err))
-            raise LookupError
+            raise LookupError('Could not retrieve %s (%s)' % (url, str(err)))
         else:
             return response.read()
 
