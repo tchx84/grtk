@@ -16,6 +16,7 @@
 
 import os
 import json
+import shutil
 import urllib2
 import urlparse
 
@@ -36,6 +37,11 @@ class Issue(object):
         attachments = sorted(issue_metadata['issue']['attachments'],
                              key=lambda a: a['created_on'])
 
+        # make sure it has exactly what we asked for
+        issue_path = self._get_issue_path()
+        shutil.rmtree(issue_path)
+        os.makedirs(issue_path)
+
         for attachment in attachments[:chunk]:
             print 'Retrieving \"%s\" from %s' % (attachment['filename'],
                                                  attachment['content_url'])
@@ -45,7 +51,7 @@ class Issue(object):
     def _dump_attachment(self, name, content):
         issue_path = self._get_issue_path()
         if not os.path.exists(issue_path):
-            os.makedirs(issue_path)
+            raise EnvironmentError
 
         path = os.path.join(issue_path, name)
         with file(path, 'w') as attachment:
