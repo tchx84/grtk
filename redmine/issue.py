@@ -39,24 +39,15 @@ class Issue(object):
 
         # make sure it has exactly what we asked for
         issue_path = self._get_issue_path()
-        shutil.rmtree(issue_path)
+        if os.path.exists(issue_path):
+            shutil.rmtree(issue_path)
         os.makedirs(issue_path)
 
         for attachment in attachments[:chunk]:
-            print 'Retrieving \"%s\" from %s' % (attachment['filename'],
-                                                 attachment['content_url'])
-            self._dump_attachment(attachment['filename'],
-                                  self._request(attachment['content_url']))
-
-    def _dump_attachment(self, name, content):
-        issue_path = self._get_issue_path()
-        if not os.path.exists(issue_path):
-            raise EnvironmentError('Path %s does not exists' % issue_path)
-
-        path = os.path.join(issue_path, name)
-        with file(path, 'w') as attachment:
-            attachment.write(content)
-        print 'Saved \"%s\" to %s' % (name, path)
+            path = os.path.join(issue_path, attachment['filename'])
+            with file(path, 'w') as dump:
+                dump.write(self._request(attachment['content_url']))
+            print 'Dumped %s from %s' % (path, attachment['content_url'])
 
     def _request(self, url):
         headers = {'X-Redmine-API-Key': self._setting.get_key()}
