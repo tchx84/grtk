@@ -66,7 +66,7 @@ class Issue(object):
             response = urllib2.urlopen(req)
         except urllib2.HTTPError as err:
             print 'Could not retrieve %s: %s' % (url, str(err))
-            raise ValueError
+            raise LookupError
         else:
             return response.read()
 
