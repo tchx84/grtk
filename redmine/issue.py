@@ -36,6 +36,7 @@ class Issue(object):
         issue_metadata = json.loads(self._request(url))
         attachments = sorted(issue_metadata['issue']['attachments'],
                              key=lambda a: a['created_on'])
+        attachments.reverse()
 
         # make sure it has exactly what we asked for
         issue_path = self._get_issue_path()
