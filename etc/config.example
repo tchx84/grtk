@@ -1,3 +1,8 @@
 [default]
+# Redmine HOST
 host: http://www.redmine.com
+# API key for the request
 key: ffab42bc3d532fg34
+# Default activity for time entry
+# 9 is the default for Develop
+activity: 9

@@ -34,6 +34,8 @@ class Setting(object):
         config.read(config_path)
         self._host = config.get(self._profile, 'host', '')
         self._key = config.get(self._profile, 'key', '')
+        self._activity = config.get(
+            self._profile, 'activity', '')
 
     def get_key(self):
         return self._key
@@ -43,3 +45,6 @@ class Setting(object):
 
     def get_host(self):
         return self._host
+
+    def get_default_activity(self):
+        return self._activity
