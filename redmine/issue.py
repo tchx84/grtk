@@ -20,21 +20,38 @@ import shutil
 import urllib2
 import urlparse
 
+from .errors import IssueError
 from setting import Setting
 
 
 class Issue(object):
 
     SHOW_URL = 'issues/%s.json?include=attachments'
+    CREATE_URL = 'issues.json'
 
-    def __init__(self, issue):
+    def __init__(self, issue=None, subject=None, attachments=None):
         self._issue = str(issue)
+        self._subject = str(subject)
+        self._attachments = attachments
         self._setting = Setting()
 
+    def get(self):
+        return json.loads(self._call(self._get_show_url()))
+
+    def create(self):
+        params = {'issue':
+                 {'project_id': self._setting.get_project(),
+                  'tracker_id': self._setting.get_tracker(),
+                  'subject': self._subject,
+                  'uploads': self._attachments}}
+        response = self._call(self._get_create_url(),
+                              json.dumps(params),
+                              {'Content-Type': 'application/json'})
+        return json.loads(response)
+
     def get_attachments(self, chunk):
-        url = self._get_show_url()
-        issue_metadata = json.loads(self._request(url))
-        attachments = sorted(issue_metadata['issue']['attachments'],
+        issue = self.get()
+        attachments = sorted(issue['issue']['attachments'],
                              key=lambda a: a['created_on'])
         attachments.reverse()
 
@@ -47,23 +64,27 @@ class Issue(object):
         for attachment in attachments[:chunk]:
             path = os.path.join(issue_path, attachment['filename'])
             with file(path, 'w') as dump:
-                dump.write(self._request(attachment['content_url']))
+                dump.write(self._call(attachment['content_url']))
             print 'Dumped %s from %s' % (path, attachment['content_url'])
 
-    def _request(self, url):
+    def _call(self, url, data=None, header={}):
         headers = {'X-Redmine-API-Key': self._setting.get_key()}
-        req = urllib2.Request(url, None, headers)
+        headers = dict(headers.items() + header.items())
+        req = urllib2.Request(url, data, headers)
 
         try:
             response = urllib2.urlopen(req)
-        except urllib2.HTTPError as err:
-            raise LookupError('Could not retrieve %s (%s)' % (url, str(err)))
+        except Exception as err:
+            raise IssueError(err.message)
         else:
             return response.read()
 
     def _get_show_url(self):
         return urlparse.urljoin(self._setting.get_host(),
                                 self.SHOW_URL % self._issue)
+
+    def _get_create_url(self):
+        return urlparse.urljoin(self._setting.get_host(), self.CREATE_URL)
 
     def _get_issue_path(self):
         return os.path.join(self._setting.get_path(), self._issue)

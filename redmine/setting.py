@@ -26,6 +26,8 @@ class Setting(object):
         self._home = os.path.expanduser("~")
         self._host = None
         self._key = None
+        self._project = None
+        self._tracker = None
         self._load_config()
 
     def _load_config(self):
@@ -34,6 +36,8 @@ class Setting(object):
         config.read(config_path)
         self._host = config.get(self._profile, 'host', '')
         self._key = config.get(self._profile, 'key', '')
+        self._project = config.get(self._profile, 'project', None)
+        self._tracker = config.get(self._profile, 'tracker', None)
         self._activity = config.get(
             self._profile, 'activity', '')
 
@@ -45,6 +49,12 @@ class Setting(object):
 
     def get_host(self):
         return self._host
+
+    def get_project(self):
+        return self._project
+
+    def get_tracker(self):
+        return self._tracker
 
     def get_default_activity(self):
         return self._activity
