@@ -25,14 +25,14 @@ from setting import Setting
 
 class Issue(object):
 
-    ISSUE_URL = 'issues/%s.json?include=attachments'
+    SHOW_URL = 'issues/%s.json?include=attachments'
 
     def __init__(self, issue):
         self._issue = str(issue)
         self._setting = Setting()
 
     def get_attachments(self, chunk):
-        url = self._get_issue_url()
+        url = self._get_show_url()
         issue_metadata = json.loads(self._request(url))
         attachments = sorted(issue_metadata['issue']['attachments'],
                              key=lambda a: a['created_on'])
@@ -61,9 +61,9 @@ class Issue(object):
         else:
             return response.read()
 
-    def _get_issue_url(self):
+    def _get_show_url(self):
         return urlparse.urljoin(self._setting.get_host(),
-                                self.ISSUE_URL % self._issue)
+                                self.SHOW_URL % self._issue)
 
     def _get_issue_path(self):
         return os.path.join(self._setting.get_path(), self._issue)
