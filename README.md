@@ -4,8 +4,10 @@ grtk contains a set of convenience scripts that allows developers to
 interact with redmine from CLI.
 
 ### Features
+* send patches to redmine.
 * fetch patches from a given issue.
 * merge patches from a given issue.
+* report spent time on issues.
 
 ### Installation
 * $cd /some/place/
@@ -21,6 +23,10 @@ interact with redmine from CLI.
   alias gfetch=/some/place/grtk/fetch.py
   
   alias gmerge=/some/place/grtk/merge.py
+
+  alias gsend=/some/place/grtk/send.py
+
+  alias gspent=/some/place/grtk/spent.py
 
 ### Development
 * if you ever find this useful, feel free to extend it and send a pull request!
