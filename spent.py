@@ -23,17 +23,18 @@ from datetime import datetime
 from redmine.time_entry import TimeEntry
 from redmine.errors import TimeEntryAddException
 
-_sucess_message = u"""
+_sucess_message = u'''
     TimeEntry successfully created with id {0}
     In project:         {1}
     In issue (id):      {2}
     For user:           {3}
     Activity:           {4}
-                """
+                '''
 
-_failure_message = u"""
+_failure_message = u'''
     TimeEntry creation failed with code {0}
-    Extra details: {1}"""
+    Extra details: {1}
+                   '''
 
 
 def _spent_time(issue, date, hours, activity_id, comment):
@@ -82,7 +83,8 @@ def _main():
         try:
             date = _get_date(args.date)
         except Exception:
-            print "Please, specify the date in format {0}".format(TimeEntry.DATE_FORMAT)
+            print "Please, specify the date in format {0}"\
+                .format(TimeEntry.DATE_FORMAT)
             exit(9)
 
     _spent_time(args.issue, date, args.time, args.activity_id, args.comment)

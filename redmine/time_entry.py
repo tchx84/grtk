@@ -38,7 +38,7 @@ class TimeEntry(object):
 
     def add(self, date, hours, activity_id, comment):
         if not activity_id:
-            activity_id = self._setting.get_default_activity()
+            activity_id = self._setting.get_activity()
         if not date:
             now = datetime.datetime.now()
             date = now.strftime(self.DATE_FORMAT)
