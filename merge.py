@@ -23,10 +23,21 @@ from argparse import ArgumentParser
 
 from redmine.issue import Issue
 
+_failure_message = u'''
+    Could not merge patch set {0}
+    Extra details: {1}
+    Please try:
+        $git checkout -b {2}
+        $git git am {3} -s --3way
+                    '''
+_success_message = u'''
+    Patch set {0} successfully merged
+                   '''
+
 
 def _merge_patches(issue):
     issue_path = issue._get_issue_path()
-    patch_set = sorted([os.path.join(issue_path, p) \
+    patch_set = sorted([os.path.join(issue_path, p)
                        for p in os.listdir(issue_path)])
     patches = ' '.join(patch_set)
 
@@ -35,16 +46,14 @@ def _merge_patches(issue):
         _call('git pull')
         _call('git checkout -b %s' % issue._issue, True)
         _call('git am %s' % patches, True)
-    except Exception as e:
+    except Exception as err:
         _call('git am --abort')
         _call('git checkout master')
         _call('git branch -D %s' % issue._issue)
-        print 'something went wrong: %s' % str(e)
-        print 'please try:'
-        print 'git checkout -b %s' % issue._issue
-        print 'git am %s --3way' % patches
+        print _failure_message.format(
+            issue._issue, err, issue._issue, patches)
         sys.exit(-1)
-    print 'Successfully on %s, after applying %s' % (issue._issue, patches)
+    print _success_message.format(issue._issue)
 
 
 def _call(cmd, safe=False):

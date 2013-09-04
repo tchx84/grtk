@@ -21,7 +21,7 @@ import urllib2
 import urlparse
 
 from .errors import IssueError
-from setting import Setting
+from .setting import Setting
 
 
 class Issue(object):
@@ -75,7 +75,7 @@ class Issue(object):
         try:
             response = urllib2.urlopen(req)
         except Exception as err:
-            raise IssueError(err.message)
+            raise IssueError(err)
         else:
             return response.read()
 

@@ -20,14 +20,28 @@ import sys
 from argparse import ArgumentParser
 
 from redmine.issue import Issue
+from redmine.errors import IssueError
+
+
+_success_message = u'''
+    Patches sucessfully downloaded
+    Issue path: {0}
+                   '''
+
+_failure_message = u'''
+    Attachment could not be downloaded
+    Extra details:  {0}
+                   '''
 
 
 def _fetch_patches(id, chunk):
     issue = Issue(id)
     try:
         issue.get_attachments(chunk)
-    except Exception as err:
-        print 'Stopped suddently: %s' % str(err)
+        print _success_message.format(issue._get_issue_path())
+    except IssueError as err:
+        print _failure_message.format(err.message)
+        sys.exit(-1)
 
 
 def _main():
