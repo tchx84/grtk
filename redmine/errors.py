@@ -25,10 +25,13 @@ class TimeEntryAddException(Exception):
         self.details = details
 
     def __repr__(self):
-        return "{0} [code: {1}: {2}".format(self.message, self.code, self.details)
+        return '{0} [code: {1}: {2}'.format(
+            self.message, self.code, self.details)
+
 
 class IssueError(Exception):
     pass
+
 
 class AttachmentError(Exception):
     pass
